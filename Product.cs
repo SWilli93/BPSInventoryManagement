@@ -91,6 +91,26 @@ namespace BPSInventoryManagement
             AmountInStock++;
         }
 
+        public void IncreaseStock(int amount)
+        {
+            int newStock = AmountInStock + amount;
+
+            if (newStock <= maxItemsInStock)
+            {
+                AmountInStock += amount;
+            }
+            else
+            {
+                AmountInStock = maxItemsInStock;
+                Log($"{CreateSimpleProductRepresentation} stock overflow. {newStock - AmountInStock} item(s) ordered that couldn't be stored.");
+            }
+
+            if (AmountInStock > 10)
+            {
+                IsBelowStockThreshold = false;
+            }
+        }
+
         public void DecreaseStock(int items, string reason)
         {
             if (maxItemsInStock <= AmountInStock)
@@ -113,15 +133,31 @@ namespace BPSInventoryManagement
 
         public string DisplayDetailsFull()
         {
-            StringBuilder sb = new();
+            //StringBuilder sb = new();
+
+            //sb.Append($"{id} {name} \n{description}\n{AmountInStock} item(s) in stock");
+
+            //if (IsBelowStockThreshold)
+            //{
+            //    sb.Append("\n!!STOCK LOW!!");
+            //}
+
+            //return sb.ToString();
+            return DisplayDetailsFull("");
+        }
+
+        public string DisplayDetailsFull(string extraDetails)
+        {
+            StringBuilder sb = new StringBuilder();
 
             sb.Append($"{id} {name} \n{description}\n{AmountInStock} item(s) in stock");
+
+            sb.Append(extraDetails);
 
             if (IsBelowStockThreshold)
             {
                 sb.Append("\n!!STOCK LOW!!");
             }
-
             return sb.ToString();
         }
 
