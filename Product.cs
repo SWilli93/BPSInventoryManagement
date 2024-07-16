@@ -43,9 +43,38 @@ namespace BPSInventoryManagement
             amountInStock++;
         }
 
-        public void DecreaseStock()
+        public void DecreaseStock(int items, string reason)
         {
-            amountInStock--;
+            if (maxItemsInStock <= amountInStock)
+            {
+                amountInStock -= items;
+            } else
+            {
+                amountInStock = 0;
+            }
+
+            UpdateLowStock();
+
+            Log(reason);
+        }
+
+        public string DisplayDetailsShort()
+        {
+            return $"{id}. {name} \n{amountInStock} items in stock";
+        }
+
+        public string DisplayDetailsFull()
+        {
+            StringBuilder sb = new();
+
+            sb.Append($"{id} {name} \n{description}\n{amountInStock} item(s) in stock");
+
+            if (isBelowStockThreshold)
+            {
+                sb.Append("\n!!STOCK LOW!!");
+            }
+
+            return sb.ToString();
         }
 
         private void UpdateLowStock()
