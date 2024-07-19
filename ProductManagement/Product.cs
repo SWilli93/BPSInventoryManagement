@@ -59,7 +59,7 @@ namespace BPSInventoryManagement.ProductManagement
         public UnitType UnitType { get; set; }
 
         public int AmountInStock { get; private set; }
-        public bool IsBelowStockTreshold { get; private set; }
+        public bool IsBelowStockThreshold { get; private set; }
 
 
         public Product(int id) : this(id, string.Empty)
@@ -123,7 +123,7 @@ namespace BPSInventoryManagement.ProductManagement
 
             if (AmountInStock > StockTreshold)
             {
-                IsBelowStockTreshold = false;
+                IsBelowStockThreshold = false;
             }
         }
 
@@ -147,7 +147,7 @@ namespace BPSInventoryManagement.ProductManagement
         {
             if (AmountInStock < StockTreshold)//for now a fixed value
             {
-                IsBelowStockTreshold = true;
+                IsBelowStockThreshold = true;
             }
         }
 
@@ -162,7 +162,7 @@ namespace BPSInventoryManagement.ProductManagement
 
             sb.Append($"{Id} {Name} \n{Description}\n{Price}\n{AmountInStock} item(s) in stock");
 
-            if (IsBelowStockTreshold)
+            if (IsBelowStockThreshold)
             {
                 sb.Append("\n!!STOCK LOW!!");
             }
@@ -180,7 +180,7 @@ namespace BPSInventoryManagement.ProductManagement
 
             sb.Append(extraDetails);
 
-            if (IsBelowStockTreshold)
+            if (IsBelowStockThreshold)
             {
                 sb.Append("\n!!STOCK LOW!!");
             }
