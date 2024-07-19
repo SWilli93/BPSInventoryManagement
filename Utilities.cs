@@ -176,7 +176,7 @@ namespace BPSInventoryManagement
 
         private static void ShowProductsLowOnStock()
         {
-            List<Product> lowOnStockProducts = inventory.Where(p => p.IsBelowStockThreshold).ToList();
+            List<Product> lowOnStockProducts = inventory.Where(p => p.IsBelowStockTreshold).ToList();
 
             if (lowOnStockProducts.Count > 0)
             {
