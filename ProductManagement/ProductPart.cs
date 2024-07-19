@@ -8,22 +8,26 @@ namespace BPSInventoryManagement.ProductManagement
 {
     public partial class Product
     {
-        private void UpdateLowStock()
+
+        public static int StockTreshold = 5;
+
+        public static void ChangeStockTreshold(int newStockTreshhold)
         {
-            if (AmountInStock < 10)
-            {
-                IsBelowStockThreshold = true;
-            }
+            //we will only allow this to go through if the value is > 0
+            if (newStockTreshhold > 0)
+                StockTreshold = newStockTreshhold;
         }
+
 
         private void Log(string message)
         {
+            //this could be written to a file
             Console.WriteLine(message);
         }
 
         private string CreateSimpleProductRepresentation()
         {
-            return $"Product {id} ({name})";
+            return $"Product {Id} ({Name})";
         }
     }
 }

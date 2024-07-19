@@ -11,13 +11,23 @@ namespace BPSInventoryManagement.ProductManagement
 {
     public partial class Product
     {
+
         private int id;
         private string name = string.Empty;
         private string? description;
 
         private int maxItemsInStock = 0;
 
-        public int Id { get; set; }
+
+        public int Id
+        {
+            get { return id; }
+            set
+            {
+                id = value;
+            }
+        }
+
         public string Name
         {
             get { return name; }
@@ -39,21 +49,26 @@ namespace BPSInventoryManagement.ProductManagement
                 else
                 {
                     description = value.Length > 250 ? value[..250] : value;
+
                 }
             }
         }
 
-        public UnitType UnitType { get; set; }
-        public int AmountInStock { get; private set; }
-        public bool IsBelowStockThreshold { get; private set; }
         public Price Price { get; set; }
+
+        public UnitType UnitType { get; set; }
+
+        public int AmountInStock { get; private set; }
+        public bool IsBelowStockTreshold { get; private set; }
+
 
         public Product(int id) : this(id, string.Empty)
         {
         }
-        public Product(int Id, string name)
+
+        public Product(int id, string name)
         {
-            this.Id = Id;
+            Id = id;
             Name = name;
         }
 
@@ -64,16 +79,17 @@ namespace BPSInventoryManagement.ProductManagement
             Description = description;
             Price = price;
             UnitType = unitType;
+
             maxItemsInStock = maxAmountInStock;
-
             UpdateLowStock();
-        }
 
+        }
 
         public void UseProduct(int items)
         {
             if (items <= AmountInStock)
             {
+                //use the items
                 AmountInStock -= items;
 
                 UpdateLowStock();
@@ -82,7 +98,7 @@ namespace BPSInventoryManagement.ProductManagement
             }
             else
             {
-                Log($"Not enough items on stock for {CreateSimpleProductRepresentation()}. {AmountInStock} available but {items} requested");
+                Log($"Not enough items on stock for {CreateSimpleProductRepresentation()}. {AmountInStock} available but {items} requested.");
             }
         }
 
@@ -91,7 +107,7 @@ namespace BPSInventoryManagement.ProductManagement
             AmountInStock++;
         }
 
-        public void IncreaseStock(int amount)
+        public virtual void IncreaseStock(int amount)
         {
             int newStock = AmountInStock + amount;
 
@@ -101,20 +117,21 @@ namespace BPSInventoryManagement.ProductManagement
             }
             else
             {
-                AmountInStock = maxItemsInStock;
-                Log($"{CreateSimpleProductRepresentation} stock overflow. {newStock - AmountInStock} item(s) ordered that couldn't be stored.");
+                AmountInStock = maxItemsInStock;//we only store the possible items, overstock isn't stored
+                Log($"{CreateSimpleProductRepresentation} stock overflow. {newStock - AmountInStock} item(s) ordere that couldn't be stored.");
             }
 
-            if (AmountInStock > 10)
+            if (AmountInStock > StockTreshold)
             {
-                IsBelowStockThreshold = false;
+                IsBelowStockTreshold = false;
             }
         }
 
-        public void DecreaseStock(int items, string reason)
+        private void DecreaseStock(int items, string reason)
         {
-            if (maxItemsInStock <= AmountInStock)
+            if (items <= AmountInStock)
             {
+                //decrease the stock with the specified number items
                 AmountInStock -= items;
             }
             else
@@ -122,28 +139,36 @@ namespace BPSInventoryManagement.ProductManagement
                 AmountInStock = 0;
             }
 
-            UpdateLowStock();
-
             Log(reason);
+        }
+
+        //part of public interface
+        public void UpdateLowStock()
+        {
+            if (AmountInStock < StockTreshold)//for now a fixed value
+            {
+                IsBelowStockTreshold = true;
+            }
         }
 
         public string DisplayDetailsShort()
         {
-            return $"{id}. {name} \n{AmountInStock} items in stock";
+            return $"{Id}. {Name} \n{AmountInStock} items in stock";
         }
 
         public string DisplayDetailsFull()
         {
-            StringBuilder sb = new();
+            StringBuilder sb = new StringBuilder();
 
-            sb.Append($"{id} {name} \n{description}\n{Price}\n{AmountInStock} item(s) in stock");
+            sb.Append($"{Id} {Name} \n{Description}\n{Price}\n{AmountInStock} item(s) in stock");
 
-            if (IsBelowStockThreshold)
+            if (IsBelowStockTreshold)
             {
                 sb.Append("\n!!STOCK LOW!!");
             }
 
             return sb.ToString();
+
             //return DisplayDetailsFull("");
         }
 
@@ -151,14 +176,15 @@ namespace BPSInventoryManagement.ProductManagement
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.Append($"{id} {name} \n{description}\n{AmountInStock} item(s) in stock");
+            sb.Append($"{Id} {Name} \n{Description}\n{Price}\n{AmountInStock} item(s) in stock");
 
             sb.Append(extraDetails);
 
-            if (IsBelowStockThreshold)
+            if (IsBelowStockTreshold)
             {
                 sb.Append("\n!!STOCK LOW!!");
             }
+
             return sb.ToString();
         }
     }
